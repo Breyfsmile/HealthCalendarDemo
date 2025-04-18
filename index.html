@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="ru">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Календарь здоровья</title>
+    <link rel="stylesheet" href="./css/normalize.css">
+    <link rel="stylesheet" href="./css/style.css">
+    <link rel="stylesheet" href="./css/main.css">
+</head>
+
+<body>
+    <header class="header">
+        <div class="container">
+            <div class="header__holder flex">
+                <a href="./Main.html" class="header__site-title header__title" target="_blank" rel="noopener noreferrer">
+                    КАЛЕНДАРЬ ЗДОРОВЬЯ
+                </a>
+                <!--<button class="btn-reset header__login-btn button-main">
+                    Войти
+                </button>-->
+                <a href="./profile.html" class="btn-reset header__login-btn button-main" target="_self" rel="noopener noreferrer">
+                    Войти
+                </a>
+            </div>
+            <div class="header__menu flex top-ind side-ind">
+                <h2 class="section__title header__sub-title">
+                    <span class="highlight">Календарь здоровья</span> - ваш незаменимый помощник в организации медицинских анализов
+                </h2>
+                <div class="header__img-holder">
+                    <img src="./img/35920.png" class="header__img" alt="docs">
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <main class="main">
+        <section>
+            <div class="container">
+                <h2 class="section__title" id="why">
+                    Для чего нужен?
+                </h2>
+                <p>
+                    Сервис, сохраняющий результаты медицинских анализов в Google Календарь, представляет собой шаг к интеграции медицинской информации в повседневную цифровую среду пользователя.
+                </p>
+                <p>
+                    Традиционно медицинские результаты могут быть разрозненными, хранящимися в бумажном виде или в разных электронных системах. Сервис позволяет централизовать эти данные в одном цифровом формате — Google Календарь, что повышает удобство их хранения и поиска.
+                </p>
+                <p>
+                    Сервис помогает создать визуальную хронологию медицинских событий, что может быть полезно при мониторинге здоровья и в случае обращения к врачу за повторной консультацией или вторым мнением.
+                </p>
+            </div>
+        </section>
+    </main>
+
+    <footer class="footer top-ind">
+        <div class="container flex">
+            <div class="footer__link-holder flex">
+                <a href="" target="_blank" class="link">
+                    О нас
+                </a>
+                <a href="" target="_blank" class="link">
+                    Контакты
+                </a>
+                <a href="" target="_blank" class="link">
+                    Блог
+                </a>
+            </div>
+            <div class="footer__form-holder">
+                <form action="#" class="footer__form form flex">
+                    <h2 class="form__title">
+                        Получить консультацию
+                    </h2>
+                    <input type="text" class="footer__input footer__input_name" placeholder="Фамилия*">
+                    <input type="text" class="footer__input footer__input_mail" placeholder="Имя*">
+                    <input type="text" class="footer__input footer__input_msg" placeholder="E-mail*">
+                    <button type="button" class="form__button btn-reset button-main">
+                        Отправить данные
+                    </button>
+                </form>
+            </div>
+        </div>
+    </footer>
+</body>
+
+</html>

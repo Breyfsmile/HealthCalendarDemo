@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html lang="ru">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Календарь здоровья</title>
+    <link rel="stylesheet" href="./css/normalize.css">
+    <link rel="stylesheet" href="./css/style.css">
+    <link rel="stylesheet" href="./css/profile.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+    document.addEventListener("DOMContentLoaded", function () {
+        const historyHolder = document.querySelector('.history-holder');
+        const exampleSelect = document.getElementById('example-select');
+        const metricSelect = document.getElementById('metric-select');
+        const chartField = document.querySelector('.chart-field');
+        let metricsData = {};
+        let loadedFiles = new Set();
+        let currentChart = null;
+
+        exampleSelect.addEventListener('change', function () {
+            const selectedFile = this.value;
+
+            if (loadedFiles.has(selectedFile)) {
+                alert('Этот файл уже был загружен!');
+                return;
+            }
+
+            fetch(`./examples/${selectedFile}`)
+                .then(response => response.json())
+                .then(jsonData => {
+                    loadedFiles.add(selectedFile);
+
+                    const historyElement = document.createElement('div');
+                    historyElement.classList.add('history-element', 'flex');
+                    historyElement.innerHTML = `
+                        <div class="history-element__name">${selectedFile}</div>
+                        <div class="history-element__date">${jsonData.date}</div>
+                        <button class="history-element__delete-btn btn-reset button-main">Удалить</button>
+                    `;
+                    historyHolder.appendChild(historyElement);
+
+                    for (const metric in jsonData.metrics) {
+                        if (!metricsData[metric]) {
+                            metricsData[metric] = [];
+                        }
+                        metricsData[metric].push({
+                            date: jsonData.date,
+                            value: jsonData.metrics[metric],
+                            source: selectedFile
+                        });
+                    }
+
+                    updateMetricSelectOptions();
+                })
+                .catch(error => {
+                    alert('Не удалось загрузить файл из examples');
+                });
+        });
+
+        function updateMetricSelectOptions() {
+            metricSelect.innerHTML = '<option value="" disabled selected>Выберите метрику</option>'; 
+            for (const metric in metricsData) {
+                const option = document.createElement('option');
+                option.value = metric;
+                option.textContent = metric;
+                metricSelect.appendChild(option);
+            }
+        }
+
+        historyHolder.addEventListener('click', function (event) {
+            if (event.target.classList.contains('history-element__delete-btn')) {
+                const historyElement = event.target.closest('.history-element');
+                const fileName = historyElement.querySelector('.history-element__name').textContent;
+
+                for (const metric in metricsData) {
+                    metricsData[metric] = metricsData[metric].filter(item => item.source !== fileName);
+                    if (metricsData[metric].length === 0) {
+                        delete metricsData[metric];
+                    }
+                }
+
+                loadedFiles.delete(fileName);
+
+                historyHolder.removeChild(historyElement);
+
+                updateMetricSelectOptions();
+
+                removeChart();
+                drawNewChart();
+            }
+        });
+
+        function removeChart() {
+            if (currentChart) {
+                currentChart.destroy();
+                currentChart = null;
+            }
+        }
+
+        function drawNewChart() {
+            const selectedMetric = metricSelect.value;
+
+            if (!selectedMetric || !metricsData[selectedMetric]) {
+                return;
+            }
+
+            const chartData = metricsData[selectedMetric];
+
+            const sortedChartData = chartData.slice().sort((a, b) => new Date(a.date) - new Date(b.date));
+
+            const labels = sortedChartData.map(item => item.date);
+            const values = sortedChartData.map(item => item.value);
+
+            const ctx = document.createElement('canvas');
+            chartField.innerHTML = '';
+            chartField.appendChild(ctx);
+
+            currentChart = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        label: selectedMetric,
+                        data: values,
+                        borderColor: 'rgba(75, 192, 192, 1)',
+                        backgroundColor: 'rgba(75, 192, 192, 0.2)',
+                        borderWidth: 1,
+                        fill: true
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        y: {
+                            beginAtZero: true
+                        },
+                        x: {
+
+                        }
+                    }
+                }
+            });
+        }
+
+        metricSelect.addEventListener('change', function () {
+            drawNewChart();
+        });
+    });
+</script>    
+</head>
+
+<body>
+    <header class="header">
+        <div class="container">
+            <div class="header__holder flex">
+                <a href="http://index.html" class="header__site-title header__title" target="_blank" rel="noopener noreferrer">
+                    КАЛЕНДАРЬ ЗДОРОВЬЯ
+                </a>
+                <!--<button class="btn-reset header__login-btn button-main">
+                    Выйти
+                </button>-->
+                <a href="./index.html" class="btn-reset header__login-btn button-main" target="_self" rel="noopener noreferrer">
+                    Выйти
+                </a>
+            </div>
+        </div>
+    </header>
+
+    <main class="main">
+        <section>
+            <div class="container">
+                <h2 class="section__title" id="history">
+                    История загрузок:
+                </h2>
+                <div class="history-holder">
+                    <!--<div class="history-element flex">
+                        <div class="history-element__name">Название файла</div>
+                        <div class="history-element__format">Формат</div>
+                        <div class="history-element__date">Дата</div>
+                        <button class="history-element__delete-btn btn-reset button-main">Удалить</button>
+                    </div>
+                    <div class="history-element flex">
+                        <div class="history-element__name">Название файла</div>
+                        <div class="history-element__format">формат</div>
+                        <div class="history-element__date">Дата</div>
+                        <button class="history-element__delete-btn btn-reset button-main">Удалить</button>
+                    </div>
+                    <div class="history-element flex">
+                        <div class="history-element__name">Название файла</div>
+                        <div class="history-element__format">Формат</div>
+                        <div class="history-element__date">Дата</div>
+                        <button class="history-element__delete-btn btn-reset button-main">Удалить</button>
+                    </div>-->
+                </div>
+                <!--<form action="" class="file-form flex">
+                    <input type="file" class="hidden" name="file" id="file" accept=".json" multiple>
+                    <label for="file" class="file-submit button-main">Выбрать файл</label>
+                </form>-->
+                <form class="example-form file-form flex">
+                    <label for="example-select" style="margin-right: 10px;">Загрузить файл:</label>
+                    <select id="example-select" class="form-field" style="background-color: black; color: white;">
+                        <option value="" disabled selected>Выберите файл</option>
+                        <option value="Example-1.json">Example-1.json</option>
+                        <option value="Example-2.json">Example-2.json</option>
+                        <option value="Example-3.json">Example-3.json</option>
+                        <option value="Example-4.json">Example-4.json</option>
+                        <option value="Example-5.json">Example-5.json</option>
+                    </select>
+                </form>
+            </div>
+        </section>
+        <section>
+            <div class="container">
+                <h2 class="section__title">
+                    Визуализация:
+                </h2>
+                <div class="visualizer">
+                    <form class="metric-form flex">
+                        <label for="metric-select" class="form-name">Отобразить метрику:</label>
+                        <select id="metric-select" class="form-field" style="background-color: black; color: white;">
+                            <option value="" disabled selected>Выберите метрику</option>
+                        </select>
+                    </form>
+                    <div class="chart-field">
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer class="footer top-ind">
+        <div class="container flex">
+            <div class="footer__link-holder flex">
+                <a href="" target="_blank" class="link">
+                    О нас
+                </a>
+                <a href="" target="_blank" class="link">
+                    Контакты
+                </a>
+                <a href="" target="_blank" class="link">
+                    Блог
+                </a>
+            </div>
+            <div class="footer__form-holder">
+                <form action="#" class="footer__form form flex">
+                    <h2 class="form__title">
+                        Получить консультацию
+                    </h2>
+                    <input type="text" class="footer__input footer__input_name" placeholder="Фамилия*">
+                    <input type="text" class="footer__input footer__input_mail" placeholder="Имя*">
+                    <input type="text" class="footer__input footer__input_msg" placeholder="E-mail*">
+                    <button type="button" class="form__button btn-reset button-main">
+                        Отправить данные
+                    </button>
+                </form>
+            </div>
+        </div>
+    </footer>
+</body>
+
+</html>

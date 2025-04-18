@@ -1,0 +1,75 @@
+.history-holder {
+    margin-bottom: 30px;
+}
+
+.history-element {
+    padding: 20px;
+    border-radius: 30px;
+    border: double thick white;
+    color: white;
+    background-color: rgba(0, 106, 255, 0.727);
+    align-items: center;
+}
+
+.history-element__name {
+    margin-right: auto;
+}
+
+.history-element__format {
+    width: 10%;
+}
+
+.history-element__date {
+    width: 15%;
+}
+
+.file-form {
+    align-items: center;
+    justify-content: center;
+}
+
+.visualizer {
+    padding: 20px;
+    border: double thick white;
+    border-radius: 30px;
+    background-color: rgba(0, 106, 255, 0.727);
+}
+
+.form-name {
+    color: white;
+    margin-right: 10px;
+}
+
+.form-field {
+    border: none;
+    font-size: 16px;
+    font-weight: 400;
+    line-height: 16px;
+}
+
+.chart-field {
+    height: 300px;
+    width: calc(100% - 10px);
+    margin: 20px 5px 5px 5px;
+    border-radius: 5px;
+    background-color: white;
+}
+
+@media print {
+  .chart-field {
+    height: 300px !important;
+    width: calc(100% - 10px) !important;
+    max-width: 100% !important;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .chart-field canvas {
+    height: 100% !important;
+    width: 100% !important;
+    max-height: 100% !important;
+    max-width: 100% !important;
+    display: block;
+  }
+}
+
